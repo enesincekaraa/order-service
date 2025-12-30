@@ -1,0 +1,26 @@
+name: CI -Test
+
+on:
+  pull_request:
+    branches: ["develop"]
+  push:
+    branches: ["develop"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Build & Test
+        run: ./mvnw clean verify
