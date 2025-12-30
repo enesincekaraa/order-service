@@ -7,18 +7,29 @@ on:
     branches: [ "develop" ]
 
 jobs:
-  build-test:
+  build-test-docker:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Kodu çek
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 2️⃣ Java 21 kur
       - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
 
+      # 3️⃣ Test & Build
       - name: Build & Test
         run: ./mvnw clean verify
+
+      # 4️⃣ Docker Build
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t order-service:${{ github.sha }} \
+            -t order-service:latest \
+            .
