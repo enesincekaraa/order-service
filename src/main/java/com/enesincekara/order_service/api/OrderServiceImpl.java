@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -27,20 +28,20 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public OrderResponse createOrder(CreateOrderRequest req) {
+    public OrderResponse createOrder(String idempotencyKey,CreateOrderRequest req) {
+        Optional<Order> existing = orderRepository.findByIdempotencyKey(idempotencyKey);
+
+        if (existing.isPresent()) {
+            return toResponse(existing.get());
+        }
         Order order = new Order(
                 req.customerEmail(),
                 req.amountCents(),
-                req.currency()
+                req.currency(),
+                idempotencyKey
         );
-        Order savedOrder = orderRepository.save(order);
-
-        return new OrderResponse(
-                savedOrder.getId(),
-                savedOrder.getCustomerEmail(),
-                savedOrder.getAmountCents(),
-                savedOrder.getCurrency()
-        );
+        Order saved = orderRepository.save(order);
+        return toResponse(saved);
     }
 
     @Override
@@ -82,5 +83,16 @@ public class OrderServiceImpl implements OrderService {
     private Order findOrder(UUID orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(()-> new IllegalArgumentException("Order not found"));
+    }
+
+    private OrderResponse toResponse(Order order) {
+
+        return new OrderResponse(
+                order.getId(),
+                order.getCustomerEmail(),
+                order.getAmountCents(),
+                order.getCurrency(),
+                order.getIdempotencyKey()
+        );
     }
 }
