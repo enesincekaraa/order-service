@@ -1,0 +1,11 @@
+package com.enesincekara.order_service.api.dto;
+
+import java.util.UUID;
+
+public record OrderResponse(
+        UUID orderId,
+        String customerEmail,
+        long amountCents,
+        String currency
+) {
+}
