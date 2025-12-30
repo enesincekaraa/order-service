@@ -13,8 +13,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -83,6 +83,14 @@ class OrderControllerTest {
 
         assertEquals(response1, response2);
     }
+    @Test
+    void ping_shouldReturnPong() throws Exception {
+        mockMvc.perform(get("/api/orders/ping"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("pong"));
+    }
+
+
 
 
 }
