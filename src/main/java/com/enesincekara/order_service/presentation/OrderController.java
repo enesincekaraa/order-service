@@ -21,11 +21,18 @@ public class OrderController {
     }
 
 
+    @GetMapping("/ping")
+    public String  ping() {
+        return "pong";
+    }
+
     @PostMapping
     public ResponseEntity<OrderResponse> create(@RequestHeader("Idempotency-Key") String key, @RequestBody CreateOrderRequest request) {
        OrderResponse orderResponse = orderService.createOrder(key,request);
        return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
     }
+
+
 
     @GetMapping("/{orderId}")
     public OrderDetailResponse getById(@PathVariable UUID orderId) {
