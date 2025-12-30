@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.UUID;
 
 public interface OrderService {
-    OrderResponse createOrder(CreateOrderRequest req);
+    OrderResponse createOrder(String idempotencyKey,CreateOrderRequest req);
     OrderDetailResponse getOrderById(UUID id);
     Page<OrderListItemResponse> listOrders(String email, Pageable pageable);
     void cancelOrder(UUID id);

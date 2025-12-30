@@ -18,14 +18,33 @@ class OrderServiceTest {
 
     @Test
     void shouldCreateOrder() {
+
+        String testKey = "idem-key-1";
         CreateOrderRequest request = new CreateOrderRequest(
                 "ci@test.com",
                 1500,
                 "usd"
+
         );
-        OrderResponse response = orderService.createOrder(request);
+        OrderResponse response = orderService.createOrder(testKey,request);
         assertNotNull(response.orderId());
         assertEquals("USD", response.currency());
+        assertEquals(testKey,response.idempotencyKey());
+    }
 
+    @Test
+    void shouldReturnSameOrderWhenUsingSameIdempotencyKey() {
+        String testKey = "idem-key-2";
+        CreateOrderRequest request = new CreateOrderRequest(
+                "ci@test.com",
+                1500,
+                "usd"
+
+        );
+
+        OrderResponse response1 = orderService.createOrder(testKey,request);
+        OrderResponse response2 =  orderService.createOrder(testKey,request);
+        assertEquals(response1.orderId(),response2.orderId());
+        assertEquals(response1.idempotencyKey(),response2.idempotencyKey());
     }
 }

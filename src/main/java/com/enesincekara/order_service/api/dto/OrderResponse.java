@@ -6,6 +6,7 @@ public record OrderResponse(
         UUID orderId,
         String customerEmail,
         long amountCents,
-        String currency
+        String currency,
+        String idempotencyKey
 ) {
 }

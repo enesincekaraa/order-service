@@ -12,6 +12,9 @@ public class Order {
     @GeneratedValue
     private UUID id;
 
+    @Column(name = "idempotency_key" , unique = true, nullable = false,updatable = false)
+    private String idempotencyKey;
+
     @Column(nullable = false)
     private String customerEmail;
 
@@ -33,14 +36,15 @@ public class Order {
 
 
     protected Order() {}
-    public Order(String customerEmail, long amountCents, String currency) {
-        validate(customerEmail, amountCents, currency);
+    public Order(String customerEmail, long amountCents, String currency,String idempotencyKey) {
+        validate(customerEmail, amountCents, currency, idempotencyKey);
 
         this.customerEmail = customerEmail;
         this.amountCents = amountCents;
         this.currency = currency.toUpperCase();
         this.status = OrderStatus.CREATED;
         this.createdAt = Instant.now();
+        this.idempotencyKey = idempotencyKey;
     }
 
 
@@ -67,7 +71,7 @@ public class Order {
         touch();
     }
 
-    private void validate(String email, long amount, String currency) {
+    private void validate(String email, long amount, String currency,String idempotencyKey) {
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("Customer email is required");
         }
@@ -77,12 +81,19 @@ public class Order {
         if (currency == null || currency.length() != 3) {
             throw new IllegalArgumentException("Currency must be ISO-4217");
         }
+        if (idempotencyKey == null || idempotencyKey.isBlank()) {
+            throw new IllegalArgumentException("Idempotency key is required");
+        }
     }
 
 
 
     public UUID getId() {
         return id;
+    }
+
+    public String getIdempotencyKey() {
+        return idempotencyKey;
     }
 
     public String getCustomerEmail() {
