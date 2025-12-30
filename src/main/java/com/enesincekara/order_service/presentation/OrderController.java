@@ -5,6 +5,7 @@ import com.enesincekara.order_service.api.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -21,9 +22,9 @@ public class OrderController {
 
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public OrderResponse create( @RequestBody CreateOrderRequest request) {
-       return orderService.createOrder(request);
+    public ResponseEntity<OrderResponse> create(@RequestHeader("Idempotency-Key") String key, @RequestBody CreateOrderRequest request) {
+       OrderResponse orderResponse = orderService.createOrder(key,request);
+       return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
     }
 
     @GetMapping("/{orderId}")
