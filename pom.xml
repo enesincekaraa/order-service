@@ -67,6 +67,20 @@
             <scope>runtime</scope>
         </dependency>
 
+
+        <!-- Flyway for versioned DB migrations -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
+        <!-- Postgres support for Flyway (safe to include) -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+
+
         <!-- TEST -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
