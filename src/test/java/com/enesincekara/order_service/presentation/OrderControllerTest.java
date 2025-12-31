@@ -83,6 +83,7 @@ class OrderControllerTest {
 
         assertEquals(response1, response2);
     }
+
     @Test
     void ping_shouldReturnPong() throws Exception {
         mockMvc.perform(get("/api/orders/ping"))
